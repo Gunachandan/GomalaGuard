@@ -121,7 +121,10 @@ export class ExtentService {
     if (parentAnas < 0 || tolAbsAnas < 0 || tolRelBp < 0) {
       throw new ExtentError('Tolerance parameters and parent extent must be non-negative');
     }
-    const relTolerance = Math.ceil((parentAnas * tolRelBp) / 10000);
+    // Strict integer arithmetic with ceiling:
+    // (product + 9999) / 10000 ensures integer ceiling without float operations
+    const product = parentAnas * tolRelBp;
+    const relTolerance = product === 0 ? 0 : Math.floor((product + 9999) / 10000);
     return Math.max(tolAbsAnas, relTolerance);
   }
 

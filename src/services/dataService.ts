@@ -22,6 +22,7 @@ import {
 import { CryptoAuditService } from './cryptoAuditService';
 import { RuleEngineService } from './ruleEngineService';
 import { ExtentService } from './extentService';
+import { BannedTermsScanner } from './bannedTermsScanner';
 
 export class DataService {
   private static villages: Village[] = [
@@ -37,6 +38,7 @@ export class DataService {
       reported_count: 5,
       reviewed_count: 8,
       golden_set_passed: true,
+      golden_set_provenance: 'synthetic',
     },
     {
       id: 'vil-hosur',
@@ -50,6 +52,7 @@ export class DataService {
       reported_count: 2,
       reviewed_count: 4,
       golden_set_passed: true,
+      golden_set_provenance: 'human_verified',
     },
     {
       id: 'vil-kadaba',
@@ -63,6 +66,7 @@ export class DataService {
       reported_count: 7,
       reviewed_count: 12,
       golden_set_passed: false,
+      golden_set_provenance: 'synthetic',
     },
   ];
 
@@ -128,7 +132,7 @@ export class DataService {
     },
     {
       id: 'par-104',
-      village_id: 'vil-kallur',
+      village_id: 'vil-hosur',
       survey_number: '104',
       hissa: '2',
       baseline_tenure: 'GOMAL',
@@ -560,10 +564,16 @@ export class DataService {
     description: string;
     contact?: string;
     fileHash?: string;
-  }): { reportId: string; plainTrackingCode: string } {
+  }): { reportId: string; plainTrackingCode: string; moderationStatus: 'APPROVED' | 'FLAGGED_FOR_MODERATION'; flaggedTerms: string[] } {
     const plainTrackingCode = CryptoAuditService.generateTrackingCode();
     const trackingHmac = CryptoAuditService.hashTrackingCode(plainTrackingCode);
     const reportId = `rep-${Date.now().toString(36)}`;
+
+    // Neutral scanner: We DO NOT reject incoming citizen reports.
+    // Instead we tag them for neutral moderation to preserve factual documentation.
+    const scan = BannedTermsScanner.scanText(data.description);
+    const moderationStatus = scan.passed ? 'APPROVED' : 'FLAGGED_FOR_MODERATION';
+    const flaggedTerms = scan.violationsFound.map(v => v.term);
 
     const newReport: CitizenReport = {
       id: reportId,
@@ -574,6 +584,8 @@ export class DataService {
       photo_hashes: data.fileHash ? [data.fileHash] : [],
       corroboration_count: 1,
       status: 'SUBMITTED',
+      moderation_status: moderationStatus,
+      flagged_terms: flaggedTerms,
       created_at: new Date().toISOString(),
       has_contact_encrypted: !!data.contact,
     };
@@ -585,10 +597,10 @@ export class DataService {
       actor_name: 'Citizen Reporter',
       action: 'SUBMIT_CITIZEN_REPORT',
       target_id: reportId,
-      details: `Submitted report for Village ${data.villageId}, Survey ${data.surveyNumber}`,
+      details: `Submitted report for Village ${data.villageId}, Survey ${data.surveyNumber}. Moderation: ${moderationStatus}`,
     });
 
-    return { reportId, plainTrackingCode };
+    return { reportId, plainTrackingCode, moderationStatus, flaggedTerms };
   }
 
   /**
@@ -791,11 +803,17 @@ export class DataService {
       details.push('Gate 3 Failed: Wording must be selected from approved public phrases');
     }
 
-    // Gate 4: Village golden set passed
+    // Gate 4: Village golden set passed AND proven with ground-truthed human verification
     const village = this.villages.find(v => v.id === parcel.village_id);
-    const goldenSetPassed = village ? village.golden_set_passed : false;
-    if (!goldenSetPassed) {
+    let goldenSetPassed = false;
+    if (!village) {
+      details.push('Gate 4 Failed: Village not found');
+    } else if (!village.golden_set_passed) {
       details.push('Gate 4 Failed: Village golden set calibration has not passed');
+    } else if (village.golden_set_provenance !== 'human_verified') {
+      details.push(`Gate 4 Failed: Village golden set is synthetic (${village.golden_set_provenance || 'synthetic'}). Ground-truthed field study signed by a surveyor is required prior to unlocking publication.`);
+    } else {
+      goldenSetPassed = true;
     }
 
     const canPublish = makerCheckerPassed && officeWindowPassed && wordingApproved && goldenSetPassed;

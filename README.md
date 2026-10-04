@@ -13,11 +13,11 @@ It records what official documents show, compares them with deterministic rules,
 3. **Humans decide:** Rules compute; reviewers approve evidence tiers; nothing is filed with an authority automatically.
 4. **Privacy by structure:** Database roles (`app_public`, `app_reporter`, `app_reviewer`, `app_admin`), row-level security (RLS), and envelope encryption ensure personal names and contacts are never exposed to public views.
 5. **Deterministic & Reproducible:** Every rule result stores rule version, input record IDs, input document IDs, config hashes, and timestamps.
-6. **No accusations:** The words fraud, forged, illegal, grabber, encroacher, criminal, scam, and their Kannada equivalents are banned by automated compliance scanners.
+6. **No accusations:** The words fraud, forged, illegal, grabber, encroacher, criminal, scam, and their Kannada equivalents are banned by automated compliance scanners for all public text and export templates. Citizen reports containing evaluative words are accepted but routed to a human reviewer moderation queue.
 
 ---
 
-## 2. System Architecture
+## 2. Full-Stack System Architecture
 
 ```text
  Reporter (phone PWA)            Entrant / Moderator / Verifier (desktop console)
@@ -25,26 +25,22 @@ It records what official documents show, compares them with deterministic rules,
         └──────────────┬──────────────────────┘
                        ▼
         ┌──────────────────────────────────┐
-        │       Gomala Atlas App           │
+        │  Full-Stack Express API Server   │
+        │  (server.ts on Node.js/Express)  │
+        │  - True server-side secrets      │
+        │  - Server EXIF/GPS stripper      │
+        │  - Server publishing gate check  │
+        │  - Serialized SHA-256 audit log  │
+        │  - Constant-time HMAC lookup     │
+        └──────────────┬───────────────────┘
+                       │
+        ┌──────────────┴───────────────────┐
+        │  Vite React Single Page App      │
         │  - Kannada (kn) / English (en)   │
         │  - Offline draft queue           │
         │  - Double-entry capture & diff   │
-        └───┬───────────┬──────────────┬───┘
-            │           │              │
-            ▼           ▼              ▼
-   ┌────────────┐ ┌─────────────┐ ┌──────────────────┐
-   │ Rule Engine│ │ File Service│ │ Crypto Service   │
-   │ (R1, R2,   │ │ - strip EXIF│ │ - envelope enc.  │
-   │  R3 server)│ │ - SHA-256   │ │ - hash audit log │
-   └─────┬──────┘ └──────┬──────┘ └────────┬─────────┘
-         │               │                 │
-         ▼               ▼                 ▼
-   ┌─────────────────────────────────────────────────┐
-   │ PostgreSQL 15+ Schema & RLS (migrations/)       │
-   │ - Base tables + RLS                             │
-   │ - Append-only trigger on audit_log              │
-   │ - Public views (zero names, zero contacts)      │
-   └─────────────────────────────────────────────────┘
+        │  - Zero secrets in client bundle │
+        └──────────────────────────────────┘
 ```
 
 ---
@@ -55,76 +51,49 @@ Area is strictly calculated and stored as an integer count of **anas**:
 - 1 Acre = 40 Guntas
 - 1 Gunta = 16 Anas
 - 1 Acre = 640 Anas
-- Zero floating-point arithmetic.
+- **Zero floating-point arithmetic:** Extent math uses pure integer division with ceiling: `Math.floor((parent * bp + 9999) / 10000)`.
 - Subtraction below zero throws `Negative extent subtraction refused`.
-- Tolerance: `tolerance_anas = max(TOL_ABS_ANAS, ceil(parent_anas * TOL_REL_BP / 10000))`. Default ships as `(0, 0)` with uncalibrated banner until golden set calibration.
+- Tolerance: `tolerance_anas = max(TOL_ABS_ANAS, Math.floor((parent_anas * TOL_REL_BP + 9999) / 10000))`. Default ships as `(0, 0)` with an uncalibrated warning banner until golden set calibration.
 
 ---
 
 ## 4. Pure Rule Engine (R1–R3)
 
 - **R1: Sub-division extent balance:** Evaluates whether sum of child hissa extents exceeds parent parcel extent beyond system tolerance. Over-sum returns `CONTRADICTED` (requires $\ge 2$ documents). Under-sum with incomplete list returns `NOT_CHECKABLE`.
-- **R2: Tenure change vs baseline:** Compares baseline classification (GOMAL) with current record. Absence of an order returns `CHANGE_OBSERVED`. An official RTI reply of type `ORDER_STATED_NOT_ISSUED` (verifier-confirmed) returns `CONTRADICTED`.
+- **R2: Tenure change vs baseline:** Compares baseline classification (GOMAL) with current record. Absence of an order returns `CHANGE_OBSERVED`. An official RTI reply of type `ORDER_STATED_NOT_ISSUED` (verifier-confirmed) without an order returns `CONTRADICTED`. Conflicting order + RTI reply returns `NOT_CHECKABLE` for senior verifier inspection.
 - **R3: Mutation reference present:** Checks whether tenure change has an attached mutation register reference.
 
 ---
 
-## 5. Verification & Running Acceptance Tests
+## 5. Publishing Gate (4 Strict Conditions)
 
-Run the full acceptance test suite:
+Before any parcel observation or report can be displayed on the public atlas:
+1. **Maker-Checker Approval:** Two distinct reviewer identities (`maker_id != checker_id`).
+2. **Office Request Response Window:** Verification request or RTI filed with proof document AND `RESPONSE_WINDOW_DAYS` (default: 30 days) has elapsed without response, or response received.
+3. **Approved Canonical Wording:** Wording matches approved public phrases; banned terms scanner verified.
+4. **Human-Verified Golden Set Calibration:** Village golden set must have `provenance: 'human_verified'`. Synthetic fixtures are strictly refused.
+
+---
+
+## 6. Verification & Test Suite
+
+Run the full acceptance and SQL parity test suite:
 ```bash
-npx tsx scripts/run_acceptance_suite.ts
+npm test
 ```
 
-Output:
-```text
-TEST SUITE SUMMARY: 41/41 TESTS PASSED (0 failures)
-```
-
-Compile and lint the applet:
+Build the application for production:
 ```bash
-npm run lint
 npm run build
 ```
 
----
-
-## 6. Repository Structure
-
-```text
-├── config/
-│   ├── banned_terms.yaml        # English & Kannada prohibited vocabulary
-│   ├── legal_facts.yaml         # Grounded legal claims (UNCONFIRMED placeholders)
-│   ├── public_phrases.yaml      # Approved neutral public phrasing
-│   ├── record_format.yaml       # Pahani field keys and comparison basis
-│   └── rti_reply_types.yaml     # Controlled RTI response classification
-├── docs/
-│   └── data-protection.md       # Data controller & takedown procedure
-├── migrations/
-│   └── 001_initial_schema.sql   # PostgreSQL schema, 4 roles, RLS, functions
-├── scripts/
-│   └── run_acceptance_suite.ts  # Complete 41-case acceptance test suite
-├── src/
-│   ├── components/              # Public Atlas, Reporter PWA, Double Entry, etc.
-│   ├── services/                # Rule engine, Extent, Crypto/Audit, Scanner
-│   ├── types/                   # Domain TypeScript definitions
-│   └── App.tsx
-├── tests/
-│   ├── golden/                  # Hand-verified golden village datasets
-│   └── vectors/extent.json      # Shared extent test vectors
-└── DECISIONS.md                 # Architectural decisions & non-assumptions log
-```
-
----
-
-## 7. Pushing to your GitHub Repository
-
-To push this repository to your GitHub account:
-
-1. Create a new repository on GitHub (e.g. `gomala-atlas`).
-2. Add your remote and push:
+Run in development mode:
 ```bash
-git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-git branch -M main
-git push -u origin main
+npm run dev
 ```
+
+---
+
+## 7. License
+
+MIT License. See [LICENSE](LICENSE) for details.

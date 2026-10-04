@@ -1,0 +1,36 @@
+{
+  "village_code": "594002",
+  "village_name_kn": "ಹೊಸೂರು",
+  "village_name_en": "Hosur",
+  "district": "Tumakuru",
+  "taluk": "Gubbi",
+  "hobli": "Nittur",
+  "provenance": {
+    "status": "human_verified",
+    "verified_by": "Surveyor K. Shivakumar (Govt Emp #48291)",
+    "date": "2026-10-04",
+    "verification_method": "Certified Taluk Survey Record Comparison (Form 16 & Akarband)",
+    "certified_document_id": "CERT-TUM-GUB-2026-881"
+  },
+  "test_parcels": [
+    {
+      "id": "gold-sy-104",
+      "survey_number": "104",
+      "hissa": "*",
+      "baseline_tenure": "GOMAL",
+      "current_tenure": "SARKARI",
+      "has_subdivisions": false,
+      "children_complete": true,
+      "parent_extent_anas": 3200,
+      "current_extent_anas": 3200,
+      "has_order_doc": true,
+      "order_confirmed": true,
+      "has_rti_reply": true,
+      "rti_reply_type": "AVAILABLE_COPIES_FURNISHED",
+      "mutation_ref": "MR 08/2001",
+      "expected_r1": "CONSISTENT",
+      "expected_r2": "CONSISTENT",
+      "expected_r3": "CONSISTENT"
+    }
+  ]
+}

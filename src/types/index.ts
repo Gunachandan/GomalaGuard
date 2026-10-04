@@ -55,6 +55,7 @@ export interface Village {
   reported_count: number;
   reviewed_count: number;
   golden_set_passed: boolean;
+  golden_set_provenance?: 'synthetic' | 'human_verified';
 }
 
 export interface Parcel {
@@ -197,6 +198,8 @@ export interface CitizenReport {
   photo_hashes: string[];
   corroboration_count: number;
   status: 'SUBMITTED' | 'MODERATED' | 'LINKED_TO_PARCEL' | 'REJECTED';
+  moderation_status?: 'APPROVED' | 'FLAGGED_FOR_MODERATION';
+  flagged_terms?: string[];
   created_at: string;
   has_contact_encrypted: boolean;
 }

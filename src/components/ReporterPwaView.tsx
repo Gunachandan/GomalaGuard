@@ -66,20 +66,12 @@ export const ReporterPwaView: React.FC<ReporterPwaViewProps> = ({ lang, isOnline
     }
   };
 
+  const [moderationNotice, setModerationNotice] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError(null);
-
-    // 1. Static Banned Terms Check (Section 2 Rule 1)
-    const scan = BannedTermsScanner.scanText(description);
-    if (!scan.passed) {
-      setValidationError(
-        lang === 'kn'
-          ? `ಕ್ಷಮಿಸಿ, ನಿಮ್ಮ ವಿವರಣೆಯಲ್ಲಿ ನಿಷೇಧಿತ ಅಥವಾ ಆರೋಪದ ಪದಗಳು ಕಂಡುಬಂದಿವೆ: "${scan.violationsFound.map(v => v.term).join(', ')}". ದಯವಿಟ್ಟು ಕೇವಲ ದಾಖಲೆಗಳಲ್ಲಿರುವ ವಾಸ್ತವಿಕ ಅಂಶಗಳನ್ನು ಮಾತ್ರ ನಮೂದಿಸಿ.`
-          : `Submission refused: Banned or accusatory term detected: "${scan.violationsFound.map(v => v.term).join(', ')}". Please describe records neutrally.`
-      );
-      return;
-    }
+    setModerationNotice(null);
 
     setUploading(true);
 
@@ -110,14 +102,22 @@ export const ReporterPwaView: React.FC<ReporterPwaViewProps> = ({ lang, isOnline
         );
         resetForm();
       } else {
-        // Live Submission
-        const { plainTrackingCode } = DataService.submitReport({
+        // Live Submission with non-blocking moderation flagging
+        const { plainTrackingCode, moderationStatus, flaggedTerms } = DataService.submitReport({
           villageId,
           surveyNumber,
           description,
           contact: contact || undefined,
           fileHash,
         });
+
+        if (moderationStatus === 'FLAGGED_FOR_MODERATION') {
+          setModerationNotice(
+            lang === 'kn'
+              ? `ಗಮನಿಸಿ: ನಿಮ್ಮ ವಿವರಣೆಯಲ್ಲಿ ಕೆಲವು ಆರೋಪದ ಪದಗಳು (${flaggedTerms.join(', ')}) ಕಂಡುಬಂದಿವೆ. ವರದಿಯನ್ನು ಸ್ವೀಕರಿಸಲಾಗಿದೆ ಮತ್ತು ತಟಸ್ಥ ದಾಖಲೀಕರಣಕ್ಕಾಗಿ ಪರಿಶೀಲನಾ ತಂಡಕ್ಕೆ ಕಳುಹಿಸಲಾಗಿದೆ.`
+              : `Notice: Evaluative terms detected (${flaggedTerms.join(', ')}). Your report has been accepted and routed to a reviewer for neutral verification.`
+          );
+        }
 
         setGeneratedSecretCode(plainTrackingCode);
         resetForm();
@@ -250,6 +250,18 @@ export const ReporterPwaView: React.FC<ReporterPwaViewProps> = ({ lang, isOnline
             >
               {lang === 'kn' ? 'ಹೊಸ ವರದಿ ಸಲ್ಲಿಸಿ' : 'Submit Another Report'}
             </button>
+          </div>
+        </div>
+      )}
+
+      {moderationNotice && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 text-xs flex items-start gap-2.5">
+          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-bold block">
+              {lang === 'kn' ? 'ತಟಸ್ಥ ಪರಿಶೀಲನೆಗೆ ಕಳುಹಿಸಲಾಗಿದೆ' : 'Routed for Neutral Verification'}
+            </span>
+            <p className="leading-relaxed">{moderationNotice}</p>
           </div>
         </div>
       )}

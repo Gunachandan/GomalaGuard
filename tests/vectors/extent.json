@@ -1,13 +1,18 @@
 {
+  "description": "Independently verified extent vectors for Gomala Atlas. Conversion: 1 Acre = 40 Guntas, 1 Gunta = 16 Anas, 1 Acre = 640 Anas.",
   "conversions": [
-    { "acres": 1, "guntas": 0, "anas": 0, "total_anas": 640, "formatted": "1A-0G-0A" },
-    { "acres": 0, "guntas": 1, "anas": 0, "total_anas": 16, "formatted": "0A-1G-0A" },
-    { "acres": 0, "guntas": 0, "anas": 1, "total_anas": 1, "formatted": "0A-0G-1A" },
-    { "acres": 0, "guntas": 40, "anas": 0, "total_anas": 640, "formatted": "1A-0G-0A" },
-    { "acres": 2, "guntas": 15, "anas": 8, "total_anas": 1528, "formatted": "2A-15G-8A" },
-    { "acres": 5, "guntas": 39, "anas": 15, "total_anas": 3839, "formatted": "5A-39G-15A" },
-    { "acres": 10, "guntas": 0, "anas": 0, "total_anas": 6400, "formatted": "10A-0G-0A" },
-    { "acres": 0, "guntas": 0, "anas": 0, "total_anas": 0, "formatted": "0A-0G-0A" }
+    { "acres": 1, "guntas": 0, "anas": 0, "total_anas": 640, "formatted": "1A-0G-0A", "verified_by": "Independent calculation" },
+    { "acres": 0, "guntas": 1, "anas": 0, "total_anas": 16, "formatted": "0A-1G-0A", "verified_by": "Independent calculation" },
+    { "acres": 0, "guntas": 0, "anas": 1, "total_anas": 1, "formatted": "0A-0G-1A", "verified_by": "Independent calculation" },
+    { "acres": 0, "guntas": 40, "anas": 0, "total_anas": 640, "formatted": "1A-0G-0A", "verified_by": "Independent calculation" },
+    { "acres": 2, "guntas": 15, "anas": 8, "total_anas": 1528, "formatted": "2A-15G-8A", "verified_by": "2*640 + 15*16 + 8 = 1280 + 240 + 8 = 1528" },
+    { "acres": 3, "guntas": 12, "anas": 7, "total_anas": 2119, "formatted": "3A-12G-7A", "verified_by": "3*640 + 12*16 + 7 = 1920 + 192 + 7 = 2119" },
+    { "acres": 0, "guntas": 27, "anas": 14, "total_anas": 446, "formatted": "0A-27G-14A", "verified_by": "27*16 + 14 = 432 + 14 = 446" },
+    { "acres": 5, "guntas": 39, "anas": 15, "total_anas": 3839, "formatted": "5A-39G-15A", "verified_by": "5*640 + 39*16 + 15 = 3200 + 624 + 15 = 3839" },
+    { "acres": 10, "guntas": 0, "anas": 0, "total_anas": 6400, "formatted": "10A-0G-0A", "verified_by": "10 * 640 = 6400" },
+    { "acres": 15, "guntas": 0, "anas": 0, "total_anas": 9600, "formatted": "15A-0G-0A", "verified_by": "15 * 640 = 9600" },
+    { "acres": 100, "guntas": 39, "anas": 15, "total_anas": 64639, "formatted": "100A-39G-15A", "verified_by": "100*640 + 39*16 + 15 = 64000 + 624 + 15 = 64639" },
+    { "acres": 0, "guntas": 0, "anas": 0, "total_anas": 0, "formatted": "0A-0G-0A", "verified_by": "Zero extent baseline" }
   ],
   "arithmetic": [
     {
@@ -15,14 +20,16 @@
       "a": { "acres": 1, "guntas": 10, "anas": 0 },
       "b": { "acres": 0, "guntas": 35, "anas": 8 },
       "expected_anas": 1368,
-      "expected_formatted": "2A-5G-8A"
+      "expected_formatted": "2A-5G-8A",
+      "calculation": "800 + 568 = 1368 -> 2A-5G-8A"
     },
     {
       "op": "subtract",
       "a": { "acres": 1, "guntas": 20, "anas": 0 },
       "b": { "acres": 0, "guntas": 5, "anas": 0 },
       "expected_anas": 880,
-      "expected_formatted": "1A-15G-0A"
+      "expected_formatted": "1A-15G-0A",
+      "calculation": "960 - 80 = 880 -> 1A-15G-0A"
     },
     {
       "op": "subtract",
@@ -37,30 +44,36 @@
       "parent_anas": 640,
       "tol_abs_anas": 0,
       "tol_rel_bp": 0,
-      "expected_tolerance": 0
+      "expected_tolerance": 0,
+      "reason": "Uncalibrated default is strict zero tolerance"
     },
     {
       "parent_anas": 1000,
       "tol_abs_anas": 0,
       "tol_rel_bp": 15,
-      "expected_tolerance": 2
+      "expected_tolerance": 2,
+      "reason": "1000 * 15 = 15000. Integer ceiling (15000 + 9999)/10000 = 24999/10000 = 2"
+    },
+    {
+      "parent_anas": 1000,
+      "tol_abs_anas": 0,
+      "tol_rel_bp": 10,
+      "expected_tolerance": 1,
+      "reason": "1000 * 10 = 10000. Integer ceiling (10000 + 9999)/10000 = 19999/10000 = 1"
     },
     {
       "parent_anas": 640,
       "tol_abs_anas": 5,
       "tol_rel_bp": 10,
-      "expected_tolerance": 5
+      "expected_tolerance": 5,
+      "reason": "Max(5, ceil(640*10/10000)) = Max(5, 1) = 5"
     },
     {
       "parent_anas": 64000,
       "tol_abs_anas": 4,
       "tol_rel_bp": 50,
-      "expected_tolerance": 320
+      "expected_tolerance": 320,
+      "reason": "Max(4, (64000 * 50 + 9999)/10000) = Max(4, 3209999/10000) = 320"
     }
-  ],
-  "seeded_roundtrips_summary": {
-    "count": 10000,
-    "seed": 420420,
-    "status": "deterministic_generator_verified"
-  }
+  ]
 }

@@ -5,6 +5,12 @@
   "district": "Tumakuru",
   "taluk": "Gubbi",
   "hobli": "Kasaba",
+  "provenance": {
+    "status": "synthetic",
+    "created_by": "fixture_generator",
+    "date": "2026-10-04",
+    "notes": "Synthetic training fixture. Does not unlock publishing."
+  },
   "test_parcels": [
     {
       "id": "gold-sy-12",

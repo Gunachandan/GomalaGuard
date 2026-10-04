@@ -8,28 +8,26 @@
 5. **Did not assume "Information Not Available" means no order was issued:** When a taluk office replies that records are not found or untraceable, it returns `NOT_CHECKABLE` and triggers follow-up appeal tasks; it never marks the parcel contradicted.
 6. **Did not assume sub-division list is complete without reviewer certification:** Even if child parcels add up to less than the parent extent, R1 returns `NOT_CHECKABLE` (reason: `child_list_not_confirmed_complete`) unless `children_complete` has been explicitly marked by a reviewer.
 7. **Did not assume default area tolerance:** System ships with `TOL_ABS_ANAS = 0` and `TOL_REL_BP = 0` and displays a persistent warning banner ("Tolerance not calibrated") until calibrated with real village pilot data.
-8. **Did not assume float arithmetic is acceptable for land area:** All extent calculations are strictly integer operations on **anas** (1 Acre = 40 Guntas = 640 Anas). Any subtraction below zero throws an error.
+8. **Did not assume float arithmetic is acceptable for land area:** All extent calculations are strictly integer operations on **anas** (1 Acre = 40 Guntas = 640 Anas). Ceiling rounding uses integer math `(product + 9999) / 10000`. Any subtraction below zero throws an error.
+9. **Did not assume synthetic parcel polygons belong on public maps:** Synthetic parcel boundaries or speculative GIS parcel shapes are strictly removed from the public atlas view. Only village-level aggregates and certified survey-settlement maps with prominent boundary disclaimers are presented publicly.
+10. **Did not assume synthetic golden sets can unlock publication:** Synthetic test fixtures are strictly prevented from unlocking the publishing gate. Gate 4 requires `provenance: 'human_verified'` signed by a qualified surveyor.
+11. **Did not assume citizens should be blocked by language scanners:** While public export templates and published texts strictly block banned or accusatory vocabulary, incoming citizen reports with colloquial complaints are accepted, issued a private tracking code, and flagged for neutral moderator triage.
 
-## Implemented Architecture & Completed Slices (1 through 6)
+## Full-Stack Implementation Slices
 - **Slice 1 (Extent Library & Vectors):** Integer Anas arithmetic (`ExtentService`), `1A-0G-0A = 640 anas`, negative subtraction throws `Negative extent subtraction refused`, integer tolerance with ceiling rounding, 10,000 seeded deterministic round-trips verified.
-- **Slice 2 (Schema, Roles, RLS & Crypto-Audit):** Cryptographic SHA-256 hash-chained append-only audit log (`CryptoAuditService`), envelope encryption for khatedar names & reporter contacts, 128-bit random tracking codes stored strictly as HMAC-SHA256 with constant-time lookup.
+- **Slice 2 (Schema, Roles, RLS & Crypto-Audit):** Cryptographic SHA-256 hash-chained append-only audit log with concurrency write lock, envelope encryption for sensitive fields, 128-bit random tracking codes stored strictly as HMAC-SHA256 with constant-time lookup.
 - **Slice 3 (Rule Engine R1-R3):** Versioned pure server functions (`RuleEngineService`), two-document constraint on `CONTRADICTED`, "system tolerance" phrasing, task generation deduplicated by parcel+reason.
 - **Slice 4 (Double Entry & Desktop Reviewer Console):** Two-entrant capture from `record_format.yaml`, live extent arithmetic preview, side-by-side document viewer, Verifier resolution with mandatory audit reason, Maker-Checker tier progression (`maker_id != checker_id`).
-- **Slice 5 (Reporter PWA):** Mobile-first Kannada/English PWA, offline draft queue with sync, server-side EXIF/GPS metadata stripping, corroboration counting without duplicate storage.
-- **Slice 6 (Public Pages, Publishing Gate, Templates & Scanner):** Village aggregate layer, cadastral parcel map, 4 publishing gates, neutral RTI & Verification Memo templates, Banned Terms Scanner (English + Kannada), and golden set calibration runner.
+- **Slice 5 (Reporter PWA):** Mobile-first Kannada/English PWA, offline draft queue with sync, server-side EXIF/GPS metadata stripping, non-blocking moderation flagging.
+- **Slice 6 (Public Pages, Publishing Gate, Templates & Scanner):** Village aggregate layer, 4 publishing gates (with response window & human-verified provenance enforcement), neutral RTI & Verification Memo templates, Banned Terms Scanner.
+- **Slice 7 (Full-Stack Express Server):** Express server (`server.ts`) hosting API routes `/api/reports`, `/api/publish-gate/verify`, `/api/audit-log`, and `/api/extent/calculate` with Vite middleware mounted in dev.
 
-## Security Review Checklist (Slice 2 & Slice 5)
-A security reviewer should inspect the following diffs and safeguards:
-1. `src/services/cryptoAuditService.ts`:
-   - Verify that plain tracking codes are never persisted; only `HMAC-SHA256(code, server_secret)` is saved.
-   - Verify that `decryptSensitive` cannot be called without concurrently appending an immutable audit row with verified justification.
-   - Verify `verifyChainIntegrity()` accurately detects any altered log row or broken previous-hash pointer.
-2. `src/services/storageService.ts`:
-   - Inspect that image processing strips EXIF/GPS coordinates permanently before any public display or storage.
-   - Check that deduplication uses SHA-256 file hashes to increment corroboration counters without storing duplicate files.
-3. `src/services/bannedTermsScanner.ts`:
-   - Confirm regex scans text against both English and Kannada banned vocabularies to prevent defamatory or accusatory text submission.
-4. `src/services/dataService.ts`:
-   - Confirm the 4 Publishing Gates block public display of parcel observations until Maker-Checker approval, 30-day office request window, approved wording, and golden calibration pass.
-   - Confirm Maker-Checker constraint (`maker_id != checker_id`) in tier changes.
-
+## Security Review Checklist
+1. `server.ts`:
+   - Verify that `SERVER_HMAC_SECRET` and `SERVER_ENCRYPTION_KEY` are isolated in server process memory and never serialized into client JavaScript.
+   - Verify that EXIF stripping removes `0xFFE1` APP1 segments before storing file hashes.
+   - Verify that concurrent audit log writes are serialized via write queue to prevent chain forks.
+2. `src/services/dataService.ts` & `server.ts`:
+   - Confirm Gate 4 strictly requires `golden_set_provenance === 'human_verified'`.
+   - Confirm Gate 2 calculates elapsed days against `RESPONSE_WINDOW_DAYS` (default 30).
+   - Confirm Maker-Checker constraint (`maker_id != checker_id`).
