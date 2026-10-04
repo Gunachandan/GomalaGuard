@@ -1,0 +1,89 @@
+# Record Format Configuration for Karnataka RTC (Pahari/Bhoomi)
+# Per Section 0 & 4 of Master Prompt:
+# Anything unconfirmed makes dependent rules return NOT_CHECKABLE.
+
+version: "1.0.0"
+jurisdiction: "Karnataka"
+record_type: "RTC_PAHANI"
+
+# Extent comparison basis: GROSS or NET. Marked UNCONFIRMED until real village RTC sample is reviewed
+extent_comparison_basis: "UNCONFIRMED"
+extent_comparison_basis_status: "UNCONFIRMED"
+
+# Kharab category definitions: Marked UNCONFIRMED until real documents examined
+kharab_rules:
+  kharab_a:
+    label_kn: "ಎ-ಖರಾಬು (ಕೃಷಿಗೆ ಯೋಗ್ಯವಲ್ಲದ ಜಮೀನು)"
+    label_en: "A-Kharab (Uncultivable due to topography, pits, rocks)"
+    status: "UNCONFIRMED"
+    included_in_net: false
+  kharab_b:
+    label_kn: "ಬಿ-ಖರಾಬು (ಸಾರ್ವಜನಿಕ ಬಳಕೆ, ರಸ್ತೆ, ಗೋಮಾಳ, ಸ್ಮಶಾನ)"
+    label_en: "B-Kharab (Public purpose: road, gomala, graveyard, watercourse)"
+    status: "UNCONFIRMED"
+    included_in_net: false
+
+fields:
+  survey_number:
+    key: "survey_number"
+    label_kn: "ಸರ್ವೆ ನಂಬರ್"
+    label_en: "Survey Number"
+    type: "string"
+    required: true
+    status: "UNCONFIRMED"
+
+  hissa:
+    key: "hissa"
+    label_kn: "ಹಿಸ್ಸಾ ನಂಬರ್"
+    label_en: "Hissa Number"
+    type: "string"
+    required: false
+    status: "UNCONFIRMED"
+
+  tenure:
+    key: "tenure"
+    label_kn: "ಹಿಡುವಳಿ ವಿವರ / ನಮೂನೆ"
+    label_en: "Tenure / Classification"
+    type: "string"
+    required: true
+    status: "UNCONFIRMED"
+
+  gross_extent:
+    key: "gross_extent"
+    label_kn: "ಒಟ್ಟು ವಿಸ್ತೀರ್ಣ (ಎಕರೆ-ಗುಂಟೆ-ಆಣೆ)"
+    label_en: "Gross Extent (Acre-Gunta-Ana)"
+    type: "extent"
+    required: true
+    status: "UNCONFIRMED"
+
+  kharab_extent:
+    key: "kharab_extent"
+    label_kn: "ಖರಾಬು ವಿಸ್ತೀರ್ಣ (ಎಕರೆ-ಗುಂಟೆ-ಆಣೆ)"
+    label_en: "Kharab Extent (Acre-Gunta-Ana)"
+    type: "extent"
+    required: false
+    status: "UNCONFIRMED"
+
+  net_extent:
+    key: "net_extent"
+    label_kn: "ನಿವ್ವಳ ವಿಸ್ತೀರ್ಣ (ಎಕರೆ-ಗುಂಟೆ-ಆಣೆ)"
+    label_en: "Net Extent (Acre-Gunta-Ana)"
+    type: "extent"
+    required: false
+    status: "UNCONFIRMED"
+
+  mutation_reference:
+    key: "mutation_reference"
+    label_kn: "ಮ್ಯುಟೇಶನ್ / ಪರಭಾರೆ ಆದೇಶ ಕ್ರಮಾಂಕ"
+    label_en: "Mutation / Transaction Reference"
+    type: "string"
+    required: false
+    status: "UNCONFIRMED"
+
+  owner_name:
+    key: "owner_name"
+    label_kn: "ಖಾತೆದಾರ / ಅನುಭವದಾರರ ಹೆಸರು"
+    label_en: "Occupant / Owner Name (Encrypted at rest)"
+    type: "encrypted_string"
+    required: false
+    status: "UNCONFIRMED"

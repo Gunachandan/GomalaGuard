@@ -1,0 +1,53 @@
+# Controlled vocabulary for RTI replies per Section 6 of Master Prompt
+
+version: "1.0.0"
+reply_types:
+  ORDER_PROVIDED:
+    code: "ORDER_PROVIDED"
+    label_en: "Official order document provided in response"
+    label_kn: "ಆದೇಶದ ಪ್ರತಿಯನ್ನು ಅಧಿಕೃತವಾಗಿ ಒದಗಿಸಲಾಗಿದೆ"
+    rule_implication: "If verified, corroborates change or tenure."
+    can_cause_contradiction: false
+
+  ORDER_STATED_NOT_ISSUED:
+    code: "ORDER_STATED_NOT_ISSUED"
+    label_en: "Reply explicitly states no such order was ever passed / issued"
+    label_kn: "ಅಂತಹ ಯಾವುದೇ ಆದೇಶ ಹೊರಡಿಸಲಾಗಿಲ್ಲ ಎಂದು ಸ್ಪಷ್ಟ ಲಿಖಿತ ಉತ್ತರ ನೀಡಲಾಗಿದೆ"
+    rule_implication: "When verifier-confirmed and no order attached, triggers CONTRADICTED."
+    can_cause_contradiction: true
+    requires_verifier_confirmation: true
+
+  INFORMATION_NOT_AVAILABLE:
+    code: "INFORMATION_NOT_AVAILABLE"
+    label_en: "Records not traceable, not found, or missing in taluk records"
+    label_kn: "ದಾಖಲೆಗಳು ಪತ್ತೆಯಾಗಿಲ್ಲ / ಲಭ್ಯವಿಲ್ಲ / ಕಡತ ಸಿಗುತ್ತಿಲ್ಲ"
+    rule_implication: "Absence of evidence is not evidence. Leads to NOT_CHECKABLE or keeps CHANGE_OBSERVED."
+    can_cause_contradiction: false
+
+  TRANSFERRED_TO_OTHER_OFFICE:
+    code: "TRANSFERRED_TO_OTHER_OFFICE"
+    label_en: "Request transferred to another public authority under Section 6(3)"
+    label_kn: "ಅರ್ಜಿಯನ್ನು ಕಲಂ 6(3) ರಡಿ ಮತ್ತೊಂದು ಪ್ರಾಧಿಕಾರಕ್ಕೆ ವರ್ಗಾಯಿಸಲಾಗಿದೆ"
+    rule_implication: "Pending follow-up task created. Does not contradict."
+    can_cause_contradiction: false
+
+  REFUSED_WITH_REASON:
+    code: "REFUSED_WITH_REASON"
+    label_en: "Exemption claimed under Section 8 or statutory bar"
+    label_kn: "ಕಲಂ 8 ಅಥವಾ ಇತರೆ ನಿಯಮಾವಳಿಗಳಡಿ ಮಾಹಿತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ"
+    rule_implication: "Creates task for appeal review. Does not contradict."
+    can_cause_contradiction: false
+
+  NO_REPLY_WITHIN_PERIOD:
+    code: "NO_REPLY_WITHIN_PERIOD"
+    label_en: "30-day statutory window elapsed with no reply received"
+    label_kn: "ನಿಗದಿತ 30 ದಿನಗಳ ಕಾಲಮಿತಿಯಲ್ಲಿ ಯಾವುದೇ ಉತ್ತರ ಬಂದಿಲ್ಲ"
+    rule_implication: "Qualifies for first appeal task. Does not contradict."
+    can_cause_contradiction: false
+
+  OTHER_REVIEW_REQUIRED:
+    code: "OTHER_REVIEW_REQUIRED"
+    label_en: "Ambiguous, partial, or illegible response requiring human verification"
+    label_kn: "ಅಸ್ಪಷ್ಟ ಅಥವಾ ಅಪೂರ್ಣ ಉತ್ತರ; ಪರಿಶೀಲಕರ ಮರುಪರಿಶೀಲನೆ ಅಗತ್ಯವಿದೆ"
+    rule_implication: "Creates verifier review task."
+    can_cause_contradiction: false

@@ -1,0 +1,50 @@
+# Legal facts configuration
+# Per Section 2 Rule 2 of Master Prompt:
+# Do not write statute, section, rule, case or penalty references anywhere unless they come from here with status: confirmed.
+# Otherwise render '[CITATION TO BE CONFIRMED BY LEGAL REVIEWER]'.
+
+version: "1.0.0"
+facts:
+  rti_section_6_1:
+    key: "rti_section_6_1"
+    topic: "RTI Application Filing"
+    claim_en: "Application for seeking certified copies under Right to Information Act, 2005"
+    claim_kn: "ಮಾಹಿತಿ ಹಕ್ಕು ಕಾಯಿದೆ ರಡಿ ಪ್ರಮಾಣೀಕೃತ ಪ್ರತಿಗಳಿಗೆ ಅರ್ಜಿ"
+    statute_reference: "[CITATION TO BE CONFIRMED BY LEGAL REVIEWER]"
+    status: "unconfirmed"
+    source: "Pending legal reviewer verification"
+    read_by: "unassigned"
+    reviewed_by: "unassigned"
+
+  karnataka_land_revenue_act_gomala:
+    key: "karnataka_land_revenue_act_gomala"
+    topic: "Gomala / Pasture Reservation"
+    claim_en: "Reservation of pasture land for cattle of the village (Gomal)"
+    claim_kn: "ಗ್ರಾಮದ ಜಾನುವಾರುಗಳ ಮೇವಿಗಾಗಿ ಗೋಮಾಳ ಜಮೀನು ಮೀಸಲಿಡುವಿಕೆ"
+    statute_reference: "[CITATION TO BE CONFIRMED BY LEGAL REVIEWER]"
+    status: "unconfirmed"
+    source: "Pending legal reviewer verification"
+    read_by: "unassigned"
+    reviewed_by: "unassigned"
+
+  rti_fee_rule_karnataka:
+    key: "rti_fee_rule_karnataka"
+    topic: "RTI Application Fee Karnataka"
+    claim_en: "Application fee text"
+    claim_kn: "ಅರ್ಜಿ ಶುಲ್ಕ ವಿವರ"
+    statute_reference: "[TO BE CONFIRMED FROM STATE RTI RULES]"
+    status: "unconfirmed"
+    source: "Pending state fee rule confirmation"
+    read_by: "unassigned"
+    reviewed_by: "unassigned"
+
+  eviction_or_penal_action:
+    key: "eviction_or_penal_action"
+    topic: "Eviction or Penal Action Claims"
+    claim_en: "Statutory provisions governing removal of unauthorised occupants"
+    claim_kn: "ಅನಧಿಕೃತ ಪ್ರವೇಶ ಅಥವಾ ಒತ್ತುವರಿ ತೆರವು ಸಂಬಂಧಿತ ಕಾಯಿದೆ ನಿಯಮಗಳು"
+    statute_reference: "[CITATION TO BE CONFIRMED BY LEGAL REVIEWER]"
+    status: "unconfirmed"
+    source: "Pending advocate review for specific district practice"
+    read_by: "unassigned"
+    reviewed_by: "unassigned"

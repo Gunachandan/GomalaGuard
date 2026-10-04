@@ -1,0 +1,6 @@
+{
+  "name": "Gomala Atlas - Pasture Land Triage",
+  "description": "A triage and documentation platform for village pasture land (Gomala) records in Karnataka.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

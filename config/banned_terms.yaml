@@ -1,0 +1,42 @@
+# Banned terms list per Section 2 Rule 1 & Section 11 Slice 6 of Master Prompt
+# The words fraud, forged, illegal, grabber, encroacher, criminal, scam, and Kannada equivalents
+# MUST NEVER appear in code identifiers, stored labels, UI text, templates, or logs.
+
+version: "1.0.0"
+terms_en:
+  - "fraud"
+  - "forged"
+  - "forgery"
+  - "illegal"
+  - "illegality"
+  - "grabber"
+  - "land grab"
+  - "encroacher"
+  - "encroachment"
+  - "criminal"
+  - "scam"
+  - "corrupt"
+  - "corruption"
+  - "thief"
+  - "stealing"
+  - "culprit"
+
+terms_kn:
+  - "ವಂಚನೆ"
+  - "ನಕಲಿ"
+  - "ಅಕ್ರಮ"
+  - "ಕಬಳಿಕೆ"
+  - "ಕಬಳಿಕೆದಾರ"
+  - "ಒತ್ತುವರಿ"
+  - "ಒತ್ತುವರಿದಾರ"
+  - "ಅಪರಾಧಿ"
+  - "ಹಗರಣ"
+  - "ಭ್ರಷ್ಟ"
+  - "ಭ್ರಷ್ಟಾಚಾರ"
+  - "ಕಳ್ಳತನ"
+
+# Whitelist allowed contexts (e.g., this configuration file itself and tests)
+allowlist_files:
+  - "config/banned_terms.yaml"
+  - "src/services/bannedTermsScanner.ts"
+  - "tests/bannedTerms.test.ts"

@@ -1,0 +1,40 @@
+# Approved neutral wording for public text
+# Per Section 2 & 9 of Master Prompt: Wording comes only from approved list.
+# No accusations, no findings about persons, strictly factual.
+
+version: "1.0.0"
+phrases:
+  P1_CHANGE_OBSERVED:
+    code: "P1_CHANGE_OBSERVED"
+    text_en: "The records entered show a change in tenure classification over time. No linked order was found among the documents entered. Verification is requested from the revenue office."
+    text_kn: "ದಾಖಲಾದ ಪಹಣಿಗಳ ಪ್ರಕಾರ ಕಾಲಾನಂತರದಲ್ಲಿ ಜಮೀನಿನ ಹಿಡುವಳಿ ನಮೂನೆ ಬದಲಾವಣೆಯಾಗಿರುವುದು ಕಂಡುಬಂದಿದೆ. ಒದಗಿಸಲಾದ ದಾಖಲೆಗಳಲ್ಲಿ ಯಾವುದೇ ಸಂಬಂಧಿತ ಆದೇಶ ಕಂಡುಬಂದಿಲ್ಲ. ಕಂದಾಯ ಕಚೇರಿಯಿಂದ ಪರಿಶೀಲನೆ ಕೋರಲಾಗಿದೆ."
+
+  P2_SUBDIVISION_EXTENT_DISCREPANCY:
+    code: "P2_SUBDIVISION_EXTENT_DISCREPANCY"
+    text_en: "The sum of the recorded sub-division extents exceeds the recorded parent survey extent beyond system tolerance. Source documents disagree. Verification is requested."
+    text_kn: "ದಾಖಲಾಗಿರುವ ಹಿಸ್ಸಾಗಳ ಒಟ್ಟು ವಿಸ್ತೀರ್ಣವು ಮೂಲ ಸರ್ವೆ ನಂಬರಿನ ವಿಸ್ತೀರ್ಣಕ್ಕಿಂತ ಸಿಸ್ಟಮ್ ಟಾಲರೆನ್ಸ್‌ಗಿಂತ ಅಧಿಕವಾಗಿದೆ. ಮೂಲ ದಾಖಲೆಗಳಲ್ಲಿ ವ್ಯತ್ಯಾಸ ಕಂಡುಬಂದಿದ್ದು, ಪರಿಶೀಲನೆ ಕೋರಲಾಗಿದೆ."
+
+  P3_ORDER_VERIFIED:
+    code: "P3_ORDER_VERIFIED"
+    text_en: "The entered records show a change in tenure classification, and an official order document has been attached and confirmed by a reviewer."
+    text_kn: "ದಾಖಲಾದ ದಾಖಲೆಗಳಲ್ಲಿ ವರ್ಗೀಕರಣ ಬದಲಾವಣೆಯಾಗಿದ್ದು, ಇದಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಅಧಿಕೃತ ಸರ್ಕಾರಿ ಆದೇಶದ ಪ್ರತಿಯನ್ನು ಲಗತ್ತಿಸಿ ಪರಿಶೀಲಕರಿಂದ ಖಚಿತಪಡಿಸಲಾಗಿದೆ."
+
+  P4_REPLY_STATED_NO_ORDER:
+    code: "P4_REPLY_STATED_NO_ORDER"
+    text_en: "In response to an RTI request, the competent public authority confirmed in writing that no official order was issued for this tenure change."
+    text_kn: "ಮಾಹಿತಿ ಹಕ್ಕು ಅರ್ಜಿಗೆ ನೀಡಿದ ಲಿಖಿತ ಉತ್ತರದಲ್ಲಿ, ಈ ಹಿಡುವಳಿ ಬದಲಾವಣೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ಯಾವುದೇ ಅಧಿಕೃತ ಆದೇಶ ಹೊರಡಿಸಲಾಗಿಲ್ಲ ಎಂದು ಸಕ್ಷಮ ಪ್ರಾಧಿಕಾರವು ದೃಢಪಡಿಸಿದೆ."
+
+  P5_CONSISTENT_RECORDS:
+    code: "P5_CONSISTENT_RECORDS"
+    text_en: "Entered records and documents for this parcel are consistent with the baseline classification."
+    text_kn: "ಈ ಸರ್ವೆ ನಂಬರಿಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ದಾಖಲಾದ ಎಲ್ಲಾ ಪಹಣಿ ವಿವರಗಳು ಮೂಲ ವರ್ಗೀಕರಣಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಹೊಂದಾಣಿಕೆಯಾಗುತ್ತಿವೆ."
+
+  P6_VERIFICATION_PENDING:
+    code: "P6_VERIFICATION_PENDING"
+    text_en: "Additional documents or confirmations are required to complete verification for this parcel."
+    text_kn: "ಈ ಸರ್ವೆ ನಂಬರಿನ ಸಂಪೂರ್ಣ ಪರಿಶೀಲನೆಗೆ ಹೆಚ್ಚುವರಿ ದಾಖಲೆಗಳು ಅಥವಾ ಪರಿಶೀಲಕರ ಖಚಿತತೆ ಅಗತ್ಯವಿದೆ."
+
+  P7_REQUEST_SENT:
+    code: "P7_REQUEST_SENT"
+    text_en: "A verification request has been submitted to the designated revenue authority. Awaiting official response."
+    text_kn: "ಸಂಬಂಧಪಟ್ಟ ಕಂದಾಯ ಪ್ರಾಧಿಕಾರಕ್ಕೆ ದಾಖಲೆ ಪರಿಶೀಲನಾ ಮನವಿ ಸಲ್ಲಿಸಲಾಗಿದ್ದು, ಅಧಿಕೃತ ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ನಿರೀಕ್ಷಿಸಲಾಗುತ್ತಿದೆ."

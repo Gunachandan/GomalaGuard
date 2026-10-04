@@ -1,0 +1,66 @@
+{
+  "conversions": [
+    { "acres": 1, "guntas": 0, "anas": 0, "total_anas": 640, "formatted": "1A-0G-0A" },
+    { "acres": 0, "guntas": 1, "anas": 0, "total_anas": 16, "formatted": "0A-1G-0A" },
+    { "acres": 0, "guntas": 0, "anas": 1, "total_anas": 1, "formatted": "0A-0G-1A" },
+    { "acres": 0, "guntas": 40, "anas": 0, "total_anas": 640, "formatted": "1A-0G-0A" },
+    { "acres": 2, "guntas": 15, "anas": 8, "total_anas": 1528, "formatted": "2A-15G-8A" },
+    { "acres": 5, "guntas": 39, "anas": 15, "total_anas": 3839, "formatted": "5A-39G-15A" },
+    { "acres": 10, "guntas": 0, "anas": 0, "total_anas": 6400, "formatted": "10A-0G-0A" },
+    { "acres": 0, "guntas": 0, "anas": 0, "total_anas": 0, "formatted": "0A-0G-0A" }
+  ],
+  "arithmetic": [
+    {
+      "op": "add",
+      "a": { "acres": 1, "guntas": 10, "anas": 0 },
+      "b": { "acres": 0, "guntas": 35, "anas": 8 },
+      "expected_anas": 1368,
+      "expected_formatted": "2A-5G-8A"
+    },
+    {
+      "op": "subtract",
+      "a": { "acres": 1, "guntas": 20, "anas": 0 },
+      "b": { "acres": 0, "guntas": 5, "anas": 0 },
+      "expected_anas": 880,
+      "expected_formatted": "1A-15G-0A"
+    },
+    {
+      "op": "subtract",
+      "a": { "acres": 0, "guntas": 10, "anas": 0 },
+      "b": { "acres": 0, "guntas": 10, "anas": 1 },
+      "should_throw": true,
+      "error_message": "Negative extent subtraction refused"
+    }
+  ],
+  "tolerance_cases": [
+    {
+      "parent_anas": 640,
+      "tol_abs_anas": 0,
+      "tol_rel_bp": 0,
+      "expected_tolerance": 0
+    },
+    {
+      "parent_anas": 1000,
+      "tol_abs_anas": 0,
+      "tol_rel_bp": 15,
+      "expected_tolerance": 2
+    },
+    {
+      "parent_anas": 640,
+      "tol_abs_anas": 5,
+      "tol_rel_bp": 10,
+      "expected_tolerance": 5
+    },
+    {
+      "parent_anas": 64000,
+      "tol_abs_anas": 4,
+      "tol_rel_bp": 50,
+      "expected_tolerance": 320
+    }
+  ],
+  "seeded_roundtrips_summary": {
+    "count": 10000,
+    "seed": 420420,
+    "status": "deterministic_generator_verified"
+  }
+}
